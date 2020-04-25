@@ -23,7 +23,7 @@ ops.txt : tasklist.txt process
 	./process
 
 tasklist.txt :
-	ls ../processed/*.txt > tasklist.txt
+	find ../processed -name '*.txt' > tasklist.txt
 
 clean:
 	rm -rf *.o test process tasklist.txt
