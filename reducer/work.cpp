@@ -21,6 +21,7 @@ void process_file(std::string str) {
         std::getline(lss, sid, '\t');
         std::getline(lss, input, '\t');
         std::getline(lss, user, '\t');
+        section_counter.increment(input);
         process_case(input, user);
     }
 }

@@ -10,10 +10,6 @@ static std::mutex mut_q;
 static std::queue<std::string> files;
 static std::condition_variable cv;
 
-concurrent_counter<diff::operation, size_t> op_counter;
-concurrent_counter<std::string, size_t> digram_counter;
-concurrent_counter<std::string, size_t> trigram_counter;
-
 void reader() {
     size_t id;
     while ((id = ticket++) < task_list.size()) {
