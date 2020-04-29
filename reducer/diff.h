@@ -12,21 +12,20 @@ namespace diff {
 
 enum operation_type : int {
     OP_NONE,
+    OP_ENTER,
     OP_INSERT,
     OP_DELETE,
-    OP_REPLACE,
-    OP_SWAP,
 };
 
 std::ostream& operator << (std::ostream& os, operation_type op_type);
 
 struct operation {
     operation_type type = OP_NONE;
-    std::string before;
-    std::string after;
+    std::string context;
+    std::string tag;
 
     bool operator == (const operation& rhs) const {
-        return type == rhs.type && before == rhs.before && after == rhs.after;
+        return type == rhs.type && context == rhs.context && tag == rhs.tag;
     }
 };
 
@@ -42,7 +41,7 @@ namespace std {
         hash<string> hasher;
     public:
         size_t operator()(const diff::operation &op) const {
-            return (hasher(op.before) + hasher(op.after)) ^ op.type;
+            return (hasher(op.context) + hasher(op.tag)) ^ op.type;
         }
     };
 }

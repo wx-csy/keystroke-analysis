@@ -9,9 +9,8 @@ charset = set()
 digram = Counter()
 trigram = Counter()
 insert = Counter()
+enter = Counter()
 delete = Counter()
-replace = Counter()
-swap = Counter()
 
 tot_sentence = 0
 tot_freq = 0
@@ -29,31 +28,28 @@ for sentence, freq in csv.reader(open('sentences.txt'), delimiter='\t') :
 
 charset = ''.join(sorted(charset))
 
-for op, freq in csv.reader(open('ops.txt'), delimiter='\t') :
+for line in open('ops.txt').readlines() :
+    op, ctx, tag, freq = line.split('\t', 4)
     freq = int(freq)
-    op, old = op.split(' ', 1)
-    old, new = old.split(' -> ', 1)
     if op == 'Insert' :
-        insert[new] += 1
+        insert[ctx+tag] += freq
     elif op == 'Delete' :
-        delete[old] += 1
-    elif op == 'Swap' :
-        swap[new] += 1
-    elif op == 'Replace' :
-        replace[new[0] + new[1] + old[1] + new[2]] += 1
+        delete[ctx] += freq
+    elif op == 'Enter' :
+        enter[ctx+tag] += freq
 
 laplace = tot_freq // (2 * tot_sentence) + 1
 
 stat = {
     'charset': charset,
-    'laplace': laplace,
-    'digram': dict(digram), 
-    'trigram': dict(trigram),
+    # 'laplace': laplace,
+    # 'digram': dict(digram), 
+    # 'trigram': dict(trigram),
     'edit' : {
-        'replace': dict(replace),
+        'enter': dict(enter),
         'insert': dict(insert),
         'delete': dict(delete),
-        'swap': dict(swap)
+        # 'swap': dict(swap)
     }
 }
 
