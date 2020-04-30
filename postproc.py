@@ -38,7 +38,13 @@ for line in open('ops.txt').readlines() :
     elif op == 'Enter' :
         enter[ctx+tag] += freq
 
-laplace = tot_freq // (2 * tot_sentence) + 1
+# Laplacian correction
+for i in charset :
+    for j in charset :
+        delete[i+j] += len(charset)
+        for k in charset :
+            insert[i+j+k] += 1
+            enter[i+j+k] += 1
 
 stat = {
     'charset': charset,
@@ -53,4 +59,4 @@ stat = {
     }
 }
 
-yaml.safe_dump(stat, open('result.yml', 'w'))
+yaml.safe_dump(stat, open('model.yml', 'w'))

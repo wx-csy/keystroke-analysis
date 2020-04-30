@@ -35,7 +35,7 @@ void worker() {
         } else if (progress >= task_list.size()) {
             break;
         }
-        if (progress++ % 100 == 0) {
+        if (++progress % 100 == 0) {
             lk.lock();
             fprintf(stderr, "Progress: %zu / %zu\n", (size_t)progress, task_list.size());
         }

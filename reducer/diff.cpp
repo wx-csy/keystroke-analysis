@@ -20,8 +20,6 @@ std::ostream& operator << (std::ostream& os, const operation& op) {
     return os << op.type << '\t' << op.context << "\t" << op.tag;
 }
 
-static constexpr int MAXCHAR = 4096;
-
 static bool update(int& x, int y) {
     if (y < x) {
         x = y;
@@ -32,8 +30,6 @@ static bool update(int& x, int y) {
 }
 
 std::vector<operation> strdiff(std::string right, std::string wrong) {
-    if (right == wrong) return {};
-
     right = "^" + right + "$";
     wrong = "^" + wrong + "$";
 
