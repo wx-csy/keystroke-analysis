@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <random>
 #include <climits>
 #include <stdexcept>
 #include <cassert>
@@ -20,15 +21,6 @@ std::ostream& operator << (std::ostream& os, const operation& op) {
     return os << op.type << '\t' << op.context << "\t" << op.tag;
 }
 
-static bool update(int& x, int y) {
-    if (y < x) {
-        x = y;
-        return true;
-    } else {
-        return false;
-    }
-}
-
 std::vector<operation> strdiff(std::string right, std::string wrong) {
     right = "^" + right + "$";
     wrong = "^" + wrong + "$";
@@ -39,18 +31,29 @@ std::vector<operation> strdiff(std::string right, std::string wrong) {
         std::vector<operation_type>(wrong.size() + 1, OP_NONE));
     dp[0][0] = 0;
 
+    std::mt19937 gen;
     for (size_t i = 1; i <= right.size(); i++) {
         for (size_t j = 1; j <= wrong.size(); j++) {
             int cost = INT_MAX / 2;
-            operation_type op = OP_NONE;
+            std::vector<operation_type> ops;
 
-            if (right[i-1] == wrong[j-1] && update(cost, dp[i-1][j-1])) op = OP_ENTER;
-            if (update(cost, dp[i-1][j-1] + 1)) op = OP_ENTER;
-            if (update(cost, dp[i-1][j] + 1)) op = OP_DELETE;
-            if (update(cost, dp[i][j-1] + 1)) op = OP_INSERT;
+            auto update = [&] (int new_cost, operation_type op) {
+                if (new_cost < cost) {
+                    ops = {op};
+                    cost = new_cost;
+                } else if (new_cost == cost) {
+                    ops.push_back(op);
+                }
+            };
+
+            if (right[i-1] == wrong[j-1]) update(dp[i-1][j-1], OP_ENTER);
+            update(dp[i-1][j-1] + 1, OP_ENTER);
+            update(dp[i-1][j] + 1, OP_DELETE);
+            update(dp[i][j-1] + 1, OP_INSERT);
             
             dp[i][j] = cost;
-            dp_op[i][j] = op;
+            // for tie-breaking, we randomly pick an operation
+            dp_op[i][j] = ops[gen() % ops.size()];
         }
     }
 
@@ -62,7 +65,6 @@ std::vector<operation> strdiff(std::string right, std::string wrong) {
         switch (op.type) {
         case OP_ENTER:
             ci--; cj--;
-            if (ci + 1 == right.size() || cj + 1 == wrong.size()) continue;
             if (ci == 0 || cj == 0) continue;
             op.tag = wrong[cj];
             break;
