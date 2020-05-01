@@ -27,9 +27,11 @@ for sentence, freq in csv.reader(open('sentences.txt'), delimiter='\t') :
         trigram[sentence[i:i+3]] += freq
 
 charset = ''.join(sorted(charset))
+ctxs = [i+j for i in charset.replace('$', '') for j in charset.replace('^', '')]
 
 for line in open('ops.txt').readlines() :
     op, ctx, tag, freq = line.split('\t', 4)
+    if ctx not in ctxs : continue
     freq = int(freq)
     if op == 'Insert' :
         insert[ctx+tag] += freq
@@ -37,16 +39,6 @@ for line in open('ops.txt').readlines() :
         delete[ctx] += freq
     elif op == 'Enter' :
         enter[ctx+tag] += freq
-
-# Laplacian correction
-'''
-for i in charset :
-    for j in charset :
-        delete[i+j] += len(charset)
-        for k in charset :
-            insert[i+j+k] += 1
-            enter[i+j+k] += 1
-'''
 
 stat = {
     'charset': charset,

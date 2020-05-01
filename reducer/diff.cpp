@@ -78,6 +78,7 @@ std::vector<operation> strdiff(std::string right, std::string wrong) {
         default:
             assert(!"unexpected op_type");
         }
+        if (ci <= 0 && ci >= right.size()) continue;
         op.context = {right[ci-1], right[ci]};
         if (op.type != OP_NONE) ops.push_back(std::move(op));
     }
