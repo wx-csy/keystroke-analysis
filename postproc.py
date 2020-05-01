@@ -39,12 +39,14 @@ for line in open('ops.txt').readlines() :
         enter[ctx+tag] += freq
 
 # Laplacian correction
+'''
 for i in charset :
     for j in charset :
         delete[i+j] += len(charset)
         for k in charset :
             insert[i+j+k] += 1
             enter[i+j+k] += 1
+'''
 
 stat = {
     'charset': charset,
